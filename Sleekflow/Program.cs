@@ -1,6 +1,8 @@
-using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Sleekflow;
 using Sleekflow.Interfaces;
+using Sleekflow.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +11,23 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddScoped<TodoService>();
 string connectionString = "Server=(local);Database=Sleekflow;Trusted_Connection=True;TrustServerCertificate=true;";
-builder.Services.AddScoped<IDbTodoRepo>(provider => new DbTodoRepo(connectionString));
+builder.Services.AddDbContext<TodoDbContext>(options =>
+{
+	options.UseSqlServer(connectionString);
+});
+builder.Services.AddDbContext<UsersDbContext>(options =>
+{
+	options.UseSqlServer(connectionString);
+});
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+	.AddEntityFrameworkStores<UsersDbContext>()
+	.AddDefaultTokenProviders();
+
+builder.Services.Configure<IdentityOptions>(options =>
+{
+	options.Password.RequireDigit = true;
+});
+builder.Services.AddScoped<IDbTodoRepo, DbTodoRepo>();
 builder.Services.AddHttpContextAccessor();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

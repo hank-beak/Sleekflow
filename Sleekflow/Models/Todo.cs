@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Sleekflow.Attributes;
+using System.ComponentModel.DataAnnotations;
 
 namespace Sleekflow.Models
 {
