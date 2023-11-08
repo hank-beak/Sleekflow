@@ -2,8 +2,8 @@
 {
 	public class TodoSort
 	{
-		public SortBy TodoSortBy { get; set; }
-		public SortOrder TodoSortOrder { get; set; }
+		public SortBy? TodoSortBy { get; set; }
+		public SortOrder? TodoSortOrder { get; set; }
 
 		public enum SortBy
 		{

@@ -10,14 +10,14 @@ namespace Sleekflow
 	public class DbTodoRepo: IDbTodoRepo
 	{
 		private readonly string _connectionString;
-        private const string SQL_INSERT = @"INSERT INTO Todo (Name, Description, DueDate, Status) VALUES (@Name, @Description, @DueDate, @Status)
-SELECT @IDENTITY
+        private const string SQL_INSERT = @"INSERT INTO Todos (Name, Description, DueDate, Status) VALUES (@Name, @Description, @DueDate, @Status)
+SELECT @@IDENTITY
 ";
-        private const string SQL_SELECT = "SELECT Id, Name, Description, DueDate, Status FROM Todo"; 
+        private const string SQL_SELECT = "SELECT Id, Name, Description, DueDate, Status FROM Todos"; 
         private const string SQL_ID_FILTER = " WHERE Id = @Id";
         private const string SQL_GET_BY_ID = SQL_SELECT + SQL_ID_FILTER;
-        private const string SQL_UPDATE = "UPDATE Todo SET Name = @Name, Description = @Description, DueDate = @DueDate, Status = @Status" + SQL_ID_FILTER;
-        private const string SQL_DELETE = "DELETE FROM Todo" + SQL_ID_FILTER;
+        private const string SQL_UPDATE = "UPDATE Todos SET Name = @Name, Description = @Description, DueDate = @DueDate, Status = @Status" + SQL_ID_FILTER;
+        private const string SQL_DELETE = "DELETE FROM Todos" + SQL_ID_FILTER;
 
         public DbTodoRepo(string connectionString)
 		{
@@ -83,7 +83,7 @@ SELECT @IDENTITY
 
                 if (filter.Status.HasValue)
                 {
-                    sql += SQL_SELECT.Contains("WHERE", StringComparison.InvariantCultureIgnoreCase) ? " AND Status = @Status" : " WHERE DueDate = @Status";
+                    sql += SQL_SELECT.Contains("WHERE", StringComparison.InvariantCultureIgnoreCase) ? " AND Status = @Status" : " WHERE Status = @Status";
                 }
             }
 
@@ -110,8 +110,14 @@ SELECT @IDENTITY
 
                 using (var command = new SqlCommand(sql, connection))
                 {
-                    command.Parameters.AddWithValue("DueDate", filter.DueDate.Value);
-                    command.Parameters.AddWithValue("Status", filter.Status.Value);
+                    if (filter != null && filter.DueDate.HasValue)
+                    {
+                        command.Parameters.AddWithValue("@DueDate", filter?.DueDate);
+                    }
+                    if (filter != null && filter.Status.HasValue)
+                    {
+                        command.Parameters.AddWithValue("@Status", filter?.Status.ToString());
+                    }
                     using (var reader = command.ExecuteReader())
                     {
                         while (reader.Read())
@@ -137,7 +143,7 @@ SELECT @IDENTITY
                     command.Parameters.AddWithValue("@Name", todo.Name);
                     command.Parameters.AddWithValue("@Description", todo.Description);
                     command.Parameters.AddWithValue("@DueDate", todo.DueDate);
-                    command.Parameters.AddWithValue("@Status", todo.Status.ToString());
+                    command.Parameters.AddWithValue("@Status", todo.Status);
 
                     command.ExecuteNonQuery();
                 }
@@ -168,7 +174,7 @@ SELECT @IDENTITY
                 Name = (string)reader["Name"],
                 Description = (string)reader["Description"],
                 DueDate = (DateTime)reader["DueDate"],
-                Status = Enum.Parse<TodoStatus>((string)reader["Status"])
+                Status = (string)reader["Status"]
             };
         }
 

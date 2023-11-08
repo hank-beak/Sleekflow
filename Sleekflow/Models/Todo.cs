@@ -2,24 +2,17 @@
 
 namespace Sleekflow.Models
 {
-	public class Todo: IValidatableObject
-	{
-		
+	public class Todo
+	{		
 		public int Id { get; set; }
         [Required]
         public string Name { get; set; }
 		public string Description { get; set; }
 		[DataType(DataType.DateTime)]
+		[ValidTodoDueDate]
 		public DateTime DueDate { get; set; }
-		public TodoStatus Status { get; set; }
-
-		public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-		{
-			if(DueDate < DateTime.Now.Date)
-			{
-				yield return new ValidationResult("Due Date cannot be in the past");
-			}
-		}
+		[ValidTodoStatus]
+		public string Status { get; set; }
 	}
 
 	public enum TodoStatus

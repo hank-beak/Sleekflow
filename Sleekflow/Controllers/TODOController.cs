@@ -5,11 +5,11 @@ namespace Sleekflow.Controllers
 {
 	[Route("api/todos")]
 	[ApiController]
-	public class TODOController: ControllerBase
+	public class TodoController: ControllerBase
 	{
 		private readonly TodoService _todoService;
 
-		public TODOController(TodoService todoService)
+		public TodoController(TodoService todoService)
 		{
 			_todoService = todoService;
 		}
@@ -65,10 +65,14 @@ namespace Sleekflow.Controllers
 		}
 
 		[HttpPut("{id}")]
-		public IActionResult UpdateTodo(int id, Todo todo)
+		public IActionResult UpdateTodo(int id,[FromBody] Todo todo)
 		{
 			try
 			{
+				if (!ModelState.IsValid)
+				{
+					return BadRequest(ModelState);
+				}
 				var updated = _todoService.UpdateTodo(id, todo);
 
 				return Ok(updated);

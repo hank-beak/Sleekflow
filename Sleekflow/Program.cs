@@ -1,8 +1,16 @@
+using Microsoft.Extensions.Configuration;
+using Sleekflow;
+using Sleekflow.Interfaces;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddScoped<TodoService>();
+string connectionString = "Server=(local);Database=Sleekflow;Trusted_Connection=True;TrustServerCertificate=true;";
+builder.Services.AddScoped<IDbTodoRepo>(provider => new DbTodoRepo(connectionString));
+builder.Services.AddHttpContextAccessor();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
