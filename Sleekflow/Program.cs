@@ -1,6 +1,8 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Sleekflow;
+using Sleekflow.Implementations;
 using Sleekflow.Interfaces;
 using Sleekflow.Models;
 
@@ -19,16 +21,22 @@ builder.Services.AddDbContext<UsersDbContext>(options =>
 {
 	options.UseSqlServer(connectionString);
 });
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-	.AddEntityFrameworkStores<UsersDbContext>()
-	.AddDefaultTokenProviders();
 
-builder.Services.Configure<IdentityOptions>(options =>
-{
-	options.Password.RequireDigit = true;
-});
+
+builder.Services.AddScoped<IDbUserRepo, DbUserRepo>();
 builder.Services.AddScoped<IDbTodoRepo, DbTodoRepo>();
 builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+	options.Cookie.Name = "UserSession";
+	options.IdleTimeout = TimeSpan.FromMinutes(30);
+	options.Cookie.HttpOnly = true;
+	options.Cookie.IsEssential = true;
+});
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+		.AddCookie();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -43,6 +51,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
+
+app.UseSession();
 
 app.UseAuthorization();
 

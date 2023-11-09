@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Sleekflow.Implementations;
 using Sleekflow.Models;
 
 namespace Sleekflow.Controllers
 {
-	[Route("api/todos")]
+	[Authorize]
+    [Route("api/todos")]
 	[ApiController]
 	public class TodoController: ControllerBase
 	{
@@ -14,6 +17,7 @@ namespace Sleekflow.Controllers
 			_todoService = todoService;
 		}
 
+		[AllowAnonymous]
 		[HttpGet]
 		public IActionResult GetTodos([FromQuery] TodoFilter filter, [FromQuery] TodoSort sort)
 		{
@@ -28,6 +32,7 @@ namespace Sleekflow.Controllers
 			}
 		}
 
+		[AllowAnonymous]
         [HttpGet("{id}")]
         public IActionResult GetTodo(int id)
         {
@@ -46,12 +51,13 @@ namespace Sleekflow.Controllers
 			}
         }
 
+		
         [HttpPost]
 		public IActionResult CreateTodo([FromBody]Todo todo)
 		{
 			try
 			{
-				if (!ModelState.IsValid)
+				if (!HttpContext.User.Identity.IsAuthenticated || !ModelState.IsValid)
 				{
 					return BadRequest(ModelState);
 				}
@@ -63,7 +69,7 @@ namespace Sleekflow.Controllers
 				return StatusCode(500, ex.Message);
 			}
 		}
-
+		
 		[HttpPut("{id}")]
 		public IActionResult UpdateTodo(int id,[FromBody] Todo todo)
 		{

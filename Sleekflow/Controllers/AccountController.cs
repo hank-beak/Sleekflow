@@ -1,55 +1,57 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Sleekflow.Interfaces;
 using Sleekflow.Models;
+using System.Security.Claims;
+using Sleekflow.ViewModels;
 
 namespace Sleekflow.Controllers
 {
-	[Route("api/account")]
+    [Route("api/account")]
 	public class AccountController: ControllerBase
 	{
-		private readonly UsersDbContext _context;
-		private readonly UserManager<ApplicationUser> _userManager;
-		private readonly SignInManager<ApplicationUser> _signInManager;
+		private readonly IDbUserRepo _dbUserRepo;
 
-		public AccountController(UsersDbContext context, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+		public AccountController(IDbUserRepo dbUserRepo)
 		{
-			_context = context;
-			_userManager = userManager;
-			_signInManager = signInManager;
+			_dbUserRepo = dbUserRepo;
 		}
 
 		[HttpPost("register")]
-		public async Task<IActionResult> Register([FromBody] RegisterUser user)
+		public IActionResult Register([FromBody] RegisterViewModel user)
 		{
-
-			var applicationUser = new ApplicationUser { UserName = user.UserName };
-			
-			var result = await _userManager.CreateAsync(applicationUser, user.Password);
-
-			// Store the user in the database
-			if (result.Succeeded)
+			var foundUser = _dbUserRepo.GetUserByName(user.UserName);
+			if(foundUser != null) 
 			{
-				_context.Users.Add(applicationUser);
-				_context.SaveChanges();
+				return BadRequest($"Username already created/existed. Registration unsuccessful");
 			}
-			else
-			{
-				return BadRequest("Error registering user");
-			}
+			var applicationUser = new ApplicationUser { UserName = user.UserName, Role = user.Role, PasswordHash = BCrypt.Net.BCrypt.HashPassword(user.Password) };
+			_dbUserRepo.CreateUser(applicationUser);
 
-			return Ok("User registered");
+			return Ok("User registered successfully");
 		}
 
 		[HttpPost("login")]
-		public async Task<IActionResult> Login([FromBody] LoginUser loggingInUser)
+		public async Task<IActionResult> Login([FromBody] LoginViewModel loggingInUser)
 		{
-			var result = await _signInManager.PasswordSignInAsync(loggingInUser.UserName, loggingInUser.Password, false,lockoutOnFailure: false);
-			if (result.Succeeded)
+			var foundUser = loggingInUser.Id > 0 ? _dbUserRepo.GetUserById(loggingInUser.Id) : _dbUserRepo.GetUserByName(loggingInUser.UserName);
+			if(foundUser != null && BCrypt.Net.BCrypt.Verify(loggingInUser.Password, foundUser.PasswordHash))
 			{
-				return Ok("User logged in");
+				var claims = new List<Claim>()
+				{
+					new Claim(ClaimTypes.Name, loggingInUser.UserName),
+				};
+
+				var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+				var principal = new ClaimsPrincipal(identity);
+
+				await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+				return Ok("User logged in");	
 			}
 
-			return BadRequest("Error loggin in");
+			return Unauthorized("Error loggin in");
 		}
 	}
 }
