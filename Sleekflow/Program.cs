@@ -5,6 +5,7 @@ using Sleekflow;
 using Sleekflow.Implementations;
 using Sleekflow.Interfaces;
 using Sleekflow.Models;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,7 +40,17 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 		.AddCookie();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+	options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+	{
+		Version = "v1",
+		Title = "Todo API",
+		Description = "An ASP.NET Core Web API for managing ToDo items"
+	});
+	var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+	options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+});
 
 var app = builder.Build();
 
