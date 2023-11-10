@@ -1,9 +1,10 @@
 ﻿using Sleekflow.Interfaces;
-using Sleekflow.Models;
+using Sleekflow.DbContexts;
+using Sleekflow.Models.DTOs;
 
 namespace Sleekflow.Implementations
 {
-	public class DbUserRepo: IDbUserRepo
+    public class DbUserRepo: IDbUserRepo
 	{
 		private readonly UsersDbContext _context;
 
@@ -12,17 +13,17 @@ namespace Sleekflow.Implementations
 			_context = context;
 		}
 
-		public ApplicationUser GetUserById(int id)
+		public ApplicationUserDTO GetUserById(int id)
 		{
 			return _context.Users.FirstOrDefault(u => u.Id == id);
 		}
 
-		public ApplicationUser GetUserByName(string userName)
+		public ApplicationUserDTO GetUserByName(string userName)
 		{
 			return _context.Users.FirstOrDefault(u => u.UserName.Equals(userName));
 		}
 
-		public ApplicationUser CreateUser(ApplicationUser user)
+		public ApplicationUserDTO CreateUser(ApplicationUserDTO user)
 		{
 			_context.Users.Add(user);
 			_context.SaveChanges();

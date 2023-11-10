@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sleekflow.Implementations;
-using Sleekflow.Models;
+using Sleekflow.Models.RequestModels;
+using Sleekflow.Models.DTOs;
 
 namespace Sleekflow.Controllers
 {
-	[Authorize]
+    [Authorize]
     [Route("api/todos")]
 	[ApiController]
 	public class TodoController: ControllerBase
@@ -18,11 +19,11 @@ namespace Sleekflow.Controllers
 		}
 
 		/// <summary>
-		/// Gets a list of all <see cref="Todo"/>
+		/// Gets a list of all <see cref="TodoDTO"/>
 		/// </summary>
 		/// <param name="filter"></param>
 		/// <param name="sort"></param>
-		/// <returns>A list of <see cref="Todo"/></returns>
+		/// <returns>A list of <see cref="TodoDTO"/></returns>
 		/// <response code="200">Returns a list of Todos</response>
 		[AllowAnonymous]
 		[HttpGet]
@@ -41,7 +42,7 @@ namespace Sleekflow.Controllers
 		}
 
 		/// <summary>
-		/// Gets the <see cref="Todo"/> that matches the id
+		/// Gets the <see cref="TodoDTO"/> that matches the id
 		/// </summary>
 		/// <remarks>
 		/// Sample request:
@@ -74,7 +75,7 @@ namespace Sleekflow.Controllers
 
 
 		/// <summary>
-		/// Creates a new <see cref="Todo"/> item
+		/// Creates a new <see cref="TodoDTO"/> item
 		/// </summary>
 		/// <param name="todo"></param>
 		/// <remarks>
@@ -89,13 +90,13 @@ namespace Sleekflow.Controllers
 		///     }
 		///
 		/// </remarks>
-		/// <returns>A newly created <see cref="Todo"/></returns>
+		/// <returns>A newly created <see cref="TodoDTO"/></returns>
 		/// <response code="201">Returns the newly created item</response>
 		/// <response code="400">If the JSON is invalid</response>
 		[HttpPost]
 		[ProducesResponseType(StatusCodes.Status201Created)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public IActionResult CreateTodo([FromBody]Todo todo)
+		public IActionResult CreateTodo([FromBody]TodoDTO todo)
 		{
 			try
 			{
@@ -113,7 +114,7 @@ namespace Sleekflow.Controllers
 		}
 
 		/// <summary>
-		/// Updates the existing <see cref="Todo"/> if it exists
+		/// Updates the existing <see cref="TodoDTO"/> if it exists
 		/// </summary>
 		/// <param name="id"></param>
 		/// <param name="todo"></param>
@@ -129,13 +130,13 @@ namespace Sleekflow.Controllers
 		///     }
 		///
 		/// </remarks>
-		/// <returns>The updated <see cref="Todo"/></returns>
+		/// <returns>The updated <see cref="TodoDTO"/></returns>
 		/// <response code="200">Returns the updated item</response>
 		/// <response code="400">If the JSON is invalid</response>
 		[HttpPut("{id}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public IActionResult UpdateTodo(int id,[FromBody] Todo todo)
+		public IActionResult UpdateTodo(int id,[FromBody] TodoDTO todo)
 		{
 			try
 			{
@@ -154,7 +155,7 @@ namespace Sleekflow.Controllers
 		}
 
 		/// <summary>
-		/// Deletes the <see cref="Todo"/> that matches the id
+		/// Deletes the <see cref="TodoDTO"/> that matches the id
 		/// </summary>
 		/// <param name="id"></param>
 		/// <remarks>

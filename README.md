@@ -60,7 +60,7 @@ CREATE TABLE Users (
 ## Usage
 
 Below are examples on how to use the API
-
+> Note: For creating, updating and deleting Todos. You'd need to first login. Only retrieval is allowed for non-logged in users. For steps on registering/logging in users refer below.
 ### Retrieving a list of Todos
 
 To retrieve a list of TODOs, send a GET request to `/api/todos`
@@ -96,6 +96,28 @@ To create a new Todo, send a PUT request to `/api/todos/1` with this JSON as the
 ### Deleting a todo
 
 To delete a Todo, send a DELETE request to `/api/todos/1` (assuming the todo you want to delete is the one with id as 1)
+
+### Registering a user
+
+To register a User, send a POST request to `/api/account/register` with this JSON as the request payload
+```
+{
+  "userName": "Guy",
+  "password": "Password123++",
+  "role": "SomeRole"
+}
+```
+
+### Logging in as an authenticated user
+
+To log in, send a POST requet to `/api/account/login`
+```
+{
+  "userName": "Guy",
+  "password": "Password123++",
+  "role": "SomeRole"
+}
+```
 
 ## API Documentation
 

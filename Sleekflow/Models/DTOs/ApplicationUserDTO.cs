@@ -1,9 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System.ComponentModel.DataAnnotations;
-
-namespace Sleekflow.Models
+﻿namespace Sleekflow.Models.DTOs
 {
-    public class ApplicationUser
+    public class ApplicationUserDTO
     {
         public int Id { get; set; }
         public string UserName { get; set; }

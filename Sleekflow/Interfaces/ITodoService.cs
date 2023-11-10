@@ -1,13 +1,16 @@
-﻿using Sleekflow.Models;
+﻿using Sleekflow.Models.DTOs;
+using Sleekflow.Models.RequestModels;
 
 namespace Sleekflow.Interfaces
 {
     public interface ITodoService
     {
-        Todo GetTodoById(int id);
-        IEnumerable<Todo> GetTodos(TodoFilter filter, TodoSort sort);
-        Todo CreateTodo(Todo todo);
-        Todo UpdateTodo(int id, Todo todo);
+        TodoDTO GetTodoById(int id);
+        IEnumerable<TodoDTO> GetTodos(TodoFilter filter, TodoSort sort);
+        TodoDTO CreateTodo(TodoDTO todo);
+        TodoDTO UpdateTodo(int id, TodoDTO todo);
         bool DeleteTodo(int id);
     }
 }
+
+

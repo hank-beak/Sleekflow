@@ -1,9 +1,11 @@
 ﻿using Sleekflow.Interfaces;
-using Sleekflow.Models;
 using Microsoft.Data.SqlClient;
 using System.Data;
-using static Sleekflow.Models.TodoSort;
-using SortOrder = Sleekflow.Models.TodoSort.SortOrder;
+using static Sleekflow.Models.RequestModels.TodoSort;
+using SortOrder = Sleekflow.Models.RequestModels.TodoSort.SortOrder;
+using Sleekflow.DbContexts;
+using Sleekflow.Models.RequestModels;
+using Sleekflow.Models.DTOs;
 
 namespace Sleekflow.Implementations
 {
@@ -16,7 +18,7 @@ namespace Sleekflow.Implementations
             _context = context;
         }
 
-        public Todo Create(Todo todo)
+        public TodoDTO Create(TodoDTO todo)
         {
             _context.Todos.Add(todo);
             _context.SaveChanges();
@@ -24,12 +26,12 @@ namespace Sleekflow.Implementations
             return todo;
         }
 
-        public Todo GetById(int id)
+        public TodoDTO GetById(int id)
         {
             return _context.Todos.FirstOrDefault(t => t.Id == id);
         }
 
-        public IEnumerable<Todo> GetTodos(TodoFilter filter, TodoSort sort)
+        public IEnumerable<TodoDTO> GetTodos(TodoFilter filter, TodoSort sort)
         {
             var todos = _context.Todos.AsQueryable();
 
@@ -73,7 +75,7 @@ namespace Sleekflow.Implementations
             return todos.ToList();
         }
 
-        public void Update(Todo todo)
+        public void Update(TodoDTO todo)
         {
             _context.Todos.Update(todo);
             _context.SaveChanges();

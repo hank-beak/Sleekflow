@@ -1,11 +1,11 @@
-﻿using Sleekflow.Models;
+﻿using Sleekflow.Models.DTOs;
 
 namespace Sleekflow.Interfaces
 {
-	public interface IDbUserRepo
+    public interface IDbUserRepo
 	{
-		ApplicationUser GetUserById(int id);
-		ApplicationUser GetUserByName(string userName);
-		ApplicationUser CreateUser(ApplicationUser user);
+		ApplicationUserDTO GetUserById(int id);
+		ApplicationUserDTO GetUserByName(string userName);
+		ApplicationUserDTO CreateUser(ApplicationUserDTO user);
 	}
 }

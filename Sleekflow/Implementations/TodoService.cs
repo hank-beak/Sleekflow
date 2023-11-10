@@ -1,5 +1,6 @@
 ﻿using Sleekflow.Interfaces;
-using Sleekflow.Models;
+using Sleekflow.Models.RequestModels;
+using Sleekflow.Models.DTOs;
 
 namespace Sleekflow.Implementations
 {
@@ -12,7 +13,7 @@ namespace Sleekflow.Implementations
             _dbTodoRepo = dbTodoRepo;
         }
 
-        public Todo CreateTodo(Todo todo)
+        public TodoDTO CreateTodo(TodoDTO todo)
         {
             return _dbTodoRepo.Create(todo);
         }
@@ -22,17 +23,17 @@ namespace Sleekflow.Implementations
             return _dbTodoRepo.Delete(id);
         }
 
-        public Todo GetTodoById(int id)
+        public TodoDTO GetTodoById(int id)
         {
             return _dbTodoRepo.GetById(id);
         }
 
-        public IEnumerable<Todo> GetTodos(TodoFilter filter, TodoSort sort)
+        public IEnumerable<TodoDTO> GetTodos(TodoFilter filter, TodoSort sort)
         {
             return _dbTodoRepo.GetTodos(filter, sort);
         }
 
-        public Todo UpdateTodo(int id, Todo todo)
+        public TodoDTO UpdateTodo(int id, TodoDTO todo)
         {
             todo.Id = id;
             _dbTodoRepo.Update(todo);

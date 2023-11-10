@@ -2,7 +2,8 @@
 
 namespace Sleekflow.Attributes
 {
-    public class ValidTodoDueDateAttribute : ValidationAttribute
+	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
+	public class ValidTodoDueDateAttribute : ValidationAttribute
     {
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {

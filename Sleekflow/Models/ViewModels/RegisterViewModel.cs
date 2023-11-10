@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 
-namespace Sleekflow.ViewModels
+namespace Sleekflow.Models.ViewModels
 {
     public class RegisterViewModel
     {

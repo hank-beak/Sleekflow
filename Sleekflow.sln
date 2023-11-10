@@ -5,6 +5,8 @@ VisualStudioVersion = 17.7.34221.43
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sleekflow", "Sleekflow\Sleekflow.csproj", "{D613662C-ADB3-4CF5-AB35-8FA77BE03116}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SleekflowTests", "SleekflowTests\SleekflowTests.csproj", "{A7B667CC-1A7B-43B1-825C-F35ABABBD99F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{D613662C-ADB3-4CF5-AB35-8FA77BE03116}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D613662C-ADB3-4CF5-AB35-8FA77BE03116}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D613662C-ADB3-4CF5-AB35-8FA77BE03116}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7B667CC-1A7B-43B1-825C-F35ABABBD99F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7B667CC-1A7B-43B1-825C-F35ABABBD99F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7B667CC-1A7B-43B1-825C-F35ABABBD99F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7B667CC-1A7B-43B1-825C-F35ABABBD99F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

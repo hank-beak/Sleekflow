@@ -3,9 +3,10 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Sleekflow.Interfaces;
-using Sleekflow.Models;
 using System.Security.Claims;
-using Sleekflow.ViewModels;
+using Sleekflow.Models.ViewModels;
+using Sleekflow.Models;
+using Sleekflow.Models.DTOs;
 
 namespace Sleekflow.Controllers
 {
@@ -35,7 +36,7 @@ namespace Sleekflow.Controllers
 		///		}
 		///		
 		/// </remarks>
-		/// <returns>A newly created <see cref="ApplicationUser"/></returns>
+		/// <returns>A newly created <see cref="ApplicationUserDTO"/></returns>
 		/// <response code="200">Returns the newly created item</response>
 		/// <response code="400">If the username/account already exists</response>
 		[HttpPost("register")]
@@ -48,7 +49,7 @@ namespace Sleekflow.Controllers
 			{
 				return BadRequest($"Username already created/existed. Registration unsuccessful");
 			}
-			var applicationUser = new ApplicationUser { UserName = user.UserName, Role = user.Role, PasswordHash = BCrypt.Net.BCrypt.HashPassword(user.Password) };
+			var applicationUser = new ApplicationUserDTO { UserName = user.UserName, Role = user.Role, PasswordHash = BCrypt.Net.BCrypt.HashPassword(user.Password) };
 			_dbUserRepo.CreateUser(applicationUser);
 
 			return Ok("User registered successfully");

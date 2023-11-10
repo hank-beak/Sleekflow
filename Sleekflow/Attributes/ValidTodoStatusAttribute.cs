@@ -1,9 +1,9 @@
-﻿using Sleekflow.Models;
+﻿using Sleekflow.Models.DTOs;
 using System.ComponentModel.DataAnnotations;
 
 namespace Sleekflow.Attributes
 {
-    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
+	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
     public class ValidTodoStatusAttribute : ValidationAttribute
     {
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
