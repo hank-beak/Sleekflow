@@ -1,20 +1,33 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Sleekflow.Models;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Sleekflow.Implementations;
+using Sleekflow.Models.RequestModels;
+using Sleekflow.Models.DTOs;
 
 namespace Sleekflow.Controllers
 {
-	[Route("api/todos")]
+    [Authorize]
+    [Route("api/todos")]
 	[ApiController]
-	public class TODOController: ControllerBase
+	public class TodoController: ControllerBase
 	{
 		private readonly TodoService _todoService;
 
-		public TODOController(TodoService todoService)
+		public TodoController(TodoService todoService)
 		{
 			_todoService = todoService;
 		}
 
+		/// <summary>
+		/// Gets a list of all <see cref="TodoDTO"/>
+		/// </summary>
+		/// <param name="filter"></param>
+		/// <param name="sort"></param>
+		/// <returns>A list of <see cref="TodoDTO"/></returns>
+		/// <response code="200">Returns a list of Todos</response>
+		[AllowAnonymous]
 		[HttpGet]
+		[ProducesResponseType(StatusCodes.Status200OK)]
 		public IActionResult GetTodos([FromQuery] TodoFilter filter, [FromQuery] TodoSort sort)
 		{
 			try
@@ -28,8 +41,22 @@ namespace Sleekflow.Controllers
 			}
 		}
 
+		/// <summary>
+		/// Gets the <see cref="TodoDTO"/> that matches the id
+		/// </summary>
+		/// <remarks>
+		/// Sample request:
+		///
+		///     GET /api/Todos/1
+		///     
+		/// </remarks>
+		/// <param name="id"></param>
+		/// <returns></returns>
+		[AllowAnonymous]
         [HttpGet("{id}")]
-        public IActionResult GetTodo(int id)
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public IActionResult GetTodo(int id)
         {
 			try
 			{
@@ -44,10 +71,32 @@ namespace Sleekflow.Controllers
 			{
 				return StatusCode(500, ex.Message);
 			}
-        }
+		}
 
-        [HttpPost]
-		public IActionResult CreateTodo([FromBody]Todo todo)
+
+		/// <summary>
+		/// Creates a new <see cref="TodoDTO"/> item
+		/// </summary>
+		/// <param name="todo"></param>
+		/// <remarks>
+		/// Sample request:
+		///
+		///     POST /api/Todos
+		///     {
+		///			"name": "Do your laundry",
+		///			"dueDate": "2023-11-20T12:30:00",
+		///			"description": "You're out of clothes. Do you laundry.",
+		///			"status": "NotStarted"
+		///     }
+		///
+		/// </remarks>
+		/// <returns>A newly created <see cref="TodoDTO"/></returns>
+		/// <response code="201">Returns the newly created item</response>
+		/// <response code="400">If the JSON is invalid</response>
+		[HttpPost]
+		[ProducesResponseType(StatusCodes.Status201Created)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		public IActionResult CreateTodo([FromBody]TodoDTO todo)
 		{
 			try
 			{
@@ -64,11 +113,37 @@ namespace Sleekflow.Controllers
 			}
 		}
 
+		/// <summary>
+		/// Updates the existing <see cref="TodoDTO"/> if it exists
+		/// </summary>
+		/// <param name="id"></param>
+		/// <param name="todo"></param>
+		/// <remarks>
+		/// Sample request:
+		///
+		///     PUT /api/Todos/1
+		///     {
+		///			"name": "Did my laundry",
+		///			"dueDate": "2023-11-18T12:30:00",
+		///			"description": "You're out of clothes. Do you laundry.",
+		///			"status": "NotStarted"
+		///     }
+		///
+		/// </remarks>
+		/// <returns>The updated <see cref="TodoDTO"/></returns>
+		/// <response code="200">Returns the updated item</response>
+		/// <response code="400">If the JSON is invalid</response>
 		[HttpPut("{id}")]
-		public IActionResult UpdateTodo(int id, Todo todo)
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		public IActionResult UpdateTodo(int id,[FromBody] TodoDTO todo)
 		{
 			try
 			{
+				if (!ModelState.IsValid)
+				{
+					return BadRequest(ModelState);
+				}
 				var updated = _todoService.UpdateTodo(id, todo);
 
 				return Ok(updated);
@@ -79,7 +154,22 @@ namespace Sleekflow.Controllers
 			}
 		}
 
+		/// <summary>
+		/// Deletes the <see cref="TodoDTO"/> that matches the id
+		/// </summary>
+		/// <param name="id"></param>
+		/// <remarks>
+		/// Sample request:
+		///
+		///     DELETE /api/todos/1
+		///
+		/// </remarks>
+		/// <returns>Nothing</returns>
+		/// <response code="204">Returns nothing since its deleted</response>
+		/// <response code="404">If the id that needs to be deleted does not exist</response>
 		[HttpDelete]
+		[ProducesResponseType(StatusCodes.Status204NoContent)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public IActionResult DeleteTodo(int id)
 		{
 			try
@@ -87,7 +177,7 @@ namespace Sleekflow.Controllers
 				var deleted = _todoService.DeleteTodo(id);
 				if (!deleted)
 				{
-					return NotFound();
+					return NotFound("Nothing to delete");
 				}
 
 				return NoContent();
